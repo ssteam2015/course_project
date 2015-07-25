@@ -186,14 +186,16 @@ void Widget::on_OK_clicked()
         std::string strIP = ui->user_input->text().toStdString();
         if(is_destip_valid(strIP))
         {
+          printf("IP valid\n");
           Tsend.dest_ip = strIP;
-          input_count++;
           ui->user_input->clear();
           ui->label->setText("Please enter the local port ..");
         }
         else
         {
+            printf("IP invalid!!!!!!!!\n");
             ui->user_input->clear();
+            input_count--;
             ui->label->setText("Please enter the destination IP...");
         }
 
@@ -201,15 +203,17 @@ void Widget::on_OK_clicked()
     else if (input_count == 2)
     {
         Tsend.portbase = ui->user_input->text().toUInt(&ok,10);
+        printf("input_count is %d \n", input_count);
         if(ok)
         {
             ui->user_input->clear();
             ui->label->setText("Please enter the dest port ..");
-            input_count++;
+            printf("input_count is %d \n", input_count);
         }
         else
         {
             ui->user_input->clear();
+             input_count--;
             ui->label->setText("Please enter the local port ..");
         }
 
@@ -217,6 +221,7 @@ void Widget::on_OK_clicked()
     else if (input_count == 3)
     {
         Tsend.destport= ui->user_input->text().toUInt(&ok,10);
+        printf("input dest port ok\n");
         if(ok)
         {
             ui->user_input->clear();
@@ -224,11 +229,13 @@ void Widget::on_OK_clicked()
             input_count = 0;
             connect(ui->stop, SIGNAL(clicked()), this, SLOT(stop_send_thread()));
             Tsend.start();
+             printf("begin send\n");
         }
 
         else
         {
             ui->user_input->clear();
+            input_count--;
             ui->label->setText("Please enter the dest port ..");
         }
 
@@ -242,8 +249,7 @@ void Widget::on_OK_clicked()
 bool Widget::is_destip_valid(std::string & strIP)
 {
 
-    int posdot = 0, posnum = 0;
-    unsigned int nipseg = 0;
+    int nipseg = 0;
     int count = 0;
   for(int i = 0; strIP[i] != '\0'; i++)
   {
@@ -257,6 +263,7 @@ bool Widget::is_destip_valid(std::string & strIP)
          if (nipseg < 0 || nipseg > 255)
              return false;
          count++;
+         nipseg = 0;
 
     }
 
